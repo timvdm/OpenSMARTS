@@ -974,7 +974,7 @@ Listing first few permutations::
   (b, a, d, c)          @@      TH2
   ...
 
-For TB and OH stereochemistry, there is one exception. TB1/TB2 and OH3/OH3 are always
+For TB and OH stereochemistry, there is one exception. TB1/TB2 and OH1/OH2 are always
 assigned to permutation 1 and 3 respectively. This is to make the default classes
 @ (TB1/OH1) and @@ (TB2/OH2) simple to interpret for humans. For TB1 and OH1, the
 viewing axis should be looked along starting from the first atom (a) towards the
