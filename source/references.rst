@@ -1,5 +1,5 @@
-References
-==========
+References And Citations
+========================
 
 Groups
 ------
@@ -21,6 +21,9 @@ Papers
 * `D. Weininger, SMILES, a Chemical Language and Information System. 1. Introduction 
   to Methodology and Encoding Rules, Journal of Chemical Information and Computer Sciences,
   Vol. 28, pp 31-36, 1988 <http://pubs.acs.org/doi/abs/10.1021/ci00057a005>`_
+
+.. _vismara:
+
 * `P. Vismara, Union of all the minimum cycle basis of a graph,
   Electronic Journal of Combinatorics, Volume 4, Issue 1, 1997
   <http://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i1r9>`_

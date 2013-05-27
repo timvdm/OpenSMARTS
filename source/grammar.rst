@@ -116,8 +116,8 @@ replaced by *bond_expression*.
   | :ref:`brcktatom`         | *bracket_atom* ::= '[' atom_expression+ ']'                                             |
   |                          |                                                                                         |
   |                          | *atom_expression* ::= atom_primitive                                                    |
-  |                          |   | \| recursive_smarts\n                                                               |
-  |                          |   | \| unary_operator atom_primitive                                                    |
+  |                          |   | \| recursive_smarts                                                                 |
+  |                          |   | \| unary_operator atom_experssion                                                   |
   |                          |   | \| atom_expression atom_primitive                                                   |
   |                          |   | \| atom_expression binary_operator atom_primitive                                   |
   |                          |                                                                                         |
@@ -173,15 +173,16 @@ replaced by *bond_expression*.
   |                          | *ring_connectivity* ::= 'x' | 'x' NUMBER                                                |
   |                          |                                                                                         |
   |                          | *charge* ::= '-' | '-' DIGIT | '+' | '+' DIGIT                                          |
-  |                          |   | \| '--' *deprecated*                                                                |
+  |                          |   | \| '-' '-' *deprecated*                                                             |
   |                          |   | \| '++' *deprecated*                                                                |
   |                          |                                                                                         |
-  |                          | *chiral* ::= '@' | '@@'                                                                 |
-  |                          |   | \| '\@TH1' | '\@TH2'                                                                |
-  |                          |   | \| '\@AL1' | '\@AL2'                                                                |
-  |                          |   | \| '\@SP1' | '\@SP2' | '\@SP3'                                                      |
-  |                          |   | \| '\@TB1' | '\@TB2' | '\@TB3' | ... | '\@TB19' | '\@TB20'                          |
-  |                          |   | \| '\@OH1' | '\@OH2' | '\@OH3' | ... | '\@OH29' | '\@OH30'                          |
+  |                          | *chiral* ::= '@' '?'? | '@@' '?'                                                        |
+  |                          |   | \| '\@TH1' '?'? | '\@TH2' '?'?                                                      |
+  |                          |   | \| '\@AL1' '?'? | '\@AL2' '?'?                                                      |
+  |                          |   | \| '\@SP1' '?'? | '\@SP2' '?'? | '\@SP3' '?'?                                       |
+  |                          |   | \| '\@TB1' '?'? | '\@TB2' '?'? | '\@TB3' '?'? | ... | '\@TB20' '?'?                 |
+  |                          |   | \| '\@OH1' '?'? | '\@OH2' '?'? | '\@OH3' '?'? | ... | '\@OH30' '?'?                 |
+  |                          |   | \| '@TH?' | '@SP?' | '@AL?' | '@TB?' | '@OH?'                                       |
   |                          |                                                                                         |
   |                          | *class* ::= ':' NUMBER                                                                  |
   +--------------------------+-----------------------------------------------------------------------------------------+
@@ -192,7 +193,8 @@ replaced by *bond_expression*.
   |                          |   | \| bond_expression bond_primitive                                                   |
   |                          |   | \| bond_expression binary_operator bond_primitive                                   |
   |                          |                                                                                         |
-  |                          | *bond_primitive* ::= '-' | '=' | '#' | '$' | ':' | '/' | '\' | '~' | '@'                |
+  |                          | *bond_primitive* ::= '-' | '=' | '#' | '$' | ':' | '~' | '@' | '/' | '\\'               |
+  |                          | \| '/?' | '\\?'                                                                         |
   +--------------------------+-----------------------------------------------------------------------------------------+
   | **CHAINS**                                                                                                         |
   +--------------------------+-----------------------------------------------------------------------------------------+
@@ -204,6 +206,7 @@ replaced by *bond_expression*.
   |                          |                                                                                         |
   |                          | *chain* ::= branched_atom | chain branched_atom | chain bond_expression branched_atom   |
   |                          |   | \| chain dot branched_atom                                                          |
+  |                          |                                                                                         |
   |                          | *dot* ::= '.'                                                                           |
   +--------------------------+-----------------------------------------------------------------------------------------+
   | **SMARTS STRINGS**                                                                                                 |

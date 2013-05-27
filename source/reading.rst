@@ -61,7 +61,7 @@ Bracketed Atoms
 Atom expressions within square brackets ('[' and ']') may contain the any of
 the primitives in the table below. The syntax column uses the same notations
 as the previous :ref:`grammar` section. The order in which they should occur
-is not specified and does not make any difference (:ref:`operators` have to be
+is not specified and does not make any difference (:ref:`logicops` have to be
 respected of couse).
 
 +-------------------------+---------------------+
@@ -74,6 +74,8 @@ respected of couse).
 | 'A'                     | :ref:`aliphatic`    |
 +-------------------------+---------------------+
 | NUMBER                  | :ref:`isotope`      |
++-------------------------+---------------------+
+| symbol                  | :ref:`symbol`       |
 +-------------------------+---------------------+
 | 'H' | 'He' | ... | 'Lr' | :ref:`symbol`       |
 +-------------------------+---------------------+
@@ -98,8 +100,9 @@ respected of couse).
 | '-' DIGIT? | '--' \|    | :ref:`charge`       |
 | '+' DIGIT? | '++'       |                     |
 +-------------------------+---------------------+
-| '@' | '@@' | '\@TH1' \| | :ref:`chiral`       |
-| ... | '\@OH30'          |                     |
+| '@' '?'? | '@@' '?'? \| | :ref:`chiral`       |
+|   | '\@TH1''?'? \|      |                     |
+| ... | '\@OH30' '?'?     |                     |
 +-------------------------+---------------------+
 | ':' NUMBER              | :ref:`class`        |
 +-------------------------+---------------------+
@@ -284,7 +287,8 @@ The suggested type for other values is **RingMembership**
 For other values, the requirements for determining if there is a match depends on the
 ring set that is used. Originally, Daylight used the widely Smallest Set of Smallest
 Rings (SSSR) which is a minimum cycle basis. However, the relevant cycles (also known
-as K-rings) [:ref:`vismara`] are more intuitive to the authors opinion. Therefore,
+as K-rings) [`Vismara <http://www.opensmarts.org/references.html#vismara>`_] are 
+more intuitive to the authors opinion. Therefore,
 OpenSMARTS does not specify this but recommends that the SSSR should be used by default.
 Other ring sets (K-rings, all cycles, simple cyles, ...) can then be used in the case
 a user explicitly asks for this.
@@ -299,7 +303,7 @@ Ring Size
 The 'r' atom primitive specifies the size of a any ring that the atom should be member of.
 The default value is 1 and has the same semantics as the default value for ring membership
 count (i.e. **Cyclic**). Unlike all other atom primitives, the ring size primitive is not
-a unique atom property (see :ref:`unqiue`). An atom can be part of multiple rings with
+a unique atom property (see :ref:`unique`). An atom can be part of multiple rings with
 different sizes. This allows for ring size primitives to be combined using a logical AND.
 Since there are no rings smaller than 3 atoms (parallel and self-loop edges are not
 allowed in a molecular graph), the minimum legal value is 3. The suggested type is
@@ -370,6 +374,14 @@ Bond expression may contain any of the bond primitives from the table below.
 +-------------------------+---------------------+-----------------------+
 | '@'                     | Ring Bond           | **Ring**              |
 +-------------------------+---------------------+-----------------------+
+| '/'                     | Up Bond             | **UpBond**            |
++-------------------------+---------------------+-----------------------+
+| '\\'                    | Down Bond           | **DownBond**          |
++-------------------------+---------------------+-----------------------+
+| '/?'                    | Up Bond             | **UpDownBond**        |
++-------------------------+---------------------+-----------------------+
+| '\\?'                   | Down Bond           | **UpDownBond**        |
++-------------------------+---------------------+-----------------------+
 
 The same rules from OpenSMILES apply for implicit bonds.
 
@@ -384,7 +396,7 @@ operators from the table below.
 +-------------------------+-------------------------+-----------------------+------------+
 | Syntax                  | Semantics               | Suggested type        | Precedence |
 +=========================+=========================+=======================+============+
-| !;' expr                | Not, Negation           | **Not**               | 1          |
+| '!' expr                | Not, Negation           | **Not**               | 1          |
 +-------------------------+-------------------------+-----------------------+------------+
 | expr '&' expr           | And (High Precedence)   | **AndHigh**           | 2          |
 +-------------------------+-------------------------+-----------------------+------------+
@@ -608,15 +620,34 @@ this.
 |                                                       | group or a chain of two carbon atoms with     |
 |                                                       | a methoxy group on the chain's second         |
 |                                                       | carbon::                                      |
+|                                                       |                                               |
 |                                                       |   CCCC(CCOC)C(=)O                             |
 |                                                       |      ^                                        |
-| [$()]
++-------------------------------------------------------+-----------------------------------------------+
+| [$(CCCCN)$(CCO)]                                      | Recursive SMARTS may overlap when they are    |
+|                                                       | matched. This results in the following SMILES |
+|                                                       | to be a valid match::                         |
+|                                                       |                                               |
+|                                                       |   ClCC(O)CCN                                  |
+|                                                       |   ^ ++ +        <- CCO                        |
+|                                                       |     ++   +++    <- CCCCN                      |
 +-------------------------------------------------------+-----------------------------------------------+
 
-.. _uniqueness:
+.. _unique:
 
-Uniqueness
-----------
+Valued Primitives and Uniqueness
+--------------------------------
+
+Only atom primitives (not all) can have a value associated with them. Except
+for the ring size 'r' atom primitive, these values are unique properties of
+an atom. That is, an atom in a molecule can not have both of these values at
+the same time. For example, an atom can not be cyclic and acyclic or a carbon
+and nitrogen at the same time. This restricts these unique primitives to be
+combined with an AND operator. All other primitives without values are also
+unique. Bond order may be implemented using a value rather than 4 different
+types but this doesn't change that the bond order is a unique property of a
+bond. For Markush structure different semantics may apply but these are
+currently not the main focus of the OpenSMARTS specification.
 
 .. _chirality:
 
@@ -661,6 +692,38 @@ Similarly, the image below illustrates this for (extended) double bonds.
 .. image:: tetraplanar.png
 
 .. _squareplanar:
+
+Unspecified Sterochemistry
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Although the OpenSMILES specifications does not include unspecified stereochemistry
+using the '?' syntax, it is part of OpenSMARTS. Any chiral atom primitive may be
+followed by a by question mark '?'. Both '@?' and '@@?' match any stereogenic atom
+in any of the defined classes. When the class is also included (e.g. '@TB?' or
+'@OH17?) only stereogenic atoms of that class match. If a number is specified in
+combinations with '?', the semantics do not change and all numbers for a given
+class are equivalent in these cases.
+
+Neighbor Order
+^^^^^^^^^^^^^^
+
+The following sections often refer to the order of the neighboring atom of a
+stereogenic center. This order is implied by the SMARTS string itself. However,
+it is not the order of how the atoms appear in the SMARTS string as many often
+assume. Instead, the order in which the bonds that connect these neighboring
+atoms to the stereocenter are parsed determines their order. There is only
+one case where these order may not be the same and that is when using ring
+closures directly after a stereogenic atom.
+
++-------------------------------------------------------+-----------------------------------------------+
+| SMARTS                                                | Order of Neighbor Atoms                       |
++=======================================================+===============================================+
+| Cl[C@]12CCCCN2CCCCO1Br                                | Order::                                       |
+|                                                       |                                               |
+|                                                       |   Cl[C@]12CCCCN2CCCCO1Br                      |
+|                                                       |   ^       ^   ^     ^                         |
+|                                                       |   1       4   2     3                         |
++-------------------------------------------------------+-----------------------------------------------+
 
 Square Planar
 ^^^^^^^^^^^^^
@@ -879,7 +942,7 @@ the remaining axis and orders.
 |      |         | OH28      | @@    |
 +------+---------+-----------+-------+
 
-More About OH and OH Stereochemistry
+More About TB and OH Stereochemistry
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The axis choices and TB/OH numbers may seem arbitrarily at first. However, these
@@ -970,7 +1033,7 @@ use an n-ary tree or not use any tree structure at all (e.g. converting the SMAR
 
 A full OpenSMARTS stack consists of a parser, a subgraph isomorphism algorithm, a chemical
 backend and writer. A writer is not required for may applications and most implementations
-don't include it. Most implementations combine the 3 fist parts of the stack into a single
+don't include it. Most implementations combine the 3 first parts of the stack into a single
 piece of code. However, modularity is recommended and implementing these parts separately
 is highly recommended. Since an OpenSMILES parser is very similar to an OpenSMILES parser,
 it is also recommended to combine these to improve code reuse and benefit from bug fixes in
