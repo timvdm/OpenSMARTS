@@ -87,7 +87,22 @@ Retrospectively inferred in AMBIT from `Lee et al. Supplementary Matterial <http
 | i            | Insaturation                          |
 +--------------+---------------------------------------+
 
+Jmol
+----
 
+http://chemapps.stolaf.edu/jmol/docs/examples-12/Jmol-12.0-quickstart.pdf
+r500 and r600 for 5 and 6 member aromatic rings IIRC
+
+ICM
+---
+
+http://www.molsoft.com/man/smiles.html
+
+
+References
+----------
+
+http://blueobelisk.shapado.com/questions/list-of-smarts-extensions
 
 
 
